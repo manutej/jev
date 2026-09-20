@@ -1,5 +1,21 @@
 //! Colored operad kernel for JEV.
-//! Composition γ is defined only when the child output color matches the parent port.
+//!
+//! Four small algebras, one doctrine each:
+//! - cospans / pushout  — port-plugging
+//! - spans / pullback   — variable sharing
+//! - operad γ           — type-safe trees
+//! - score_fill         — fail-closed gate
+//!
+//! The TypeScript FP layer is a twin of this crate. WASM exports the C ABI in `wasm`.
+
+mod cospan;
+mod span;
+
+#[cfg(target_arch = "wasm32")]
+mod wasm;
+
+pub use cospan::{pushout_ports, GlueError};
+pub use span::pullback_ports;
 
 use std::collections::{HashMap, HashSet};
 

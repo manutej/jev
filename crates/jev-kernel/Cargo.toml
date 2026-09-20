@@ -3,7 +3,15 @@ name = "jev-kernel"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "Colored-operad kernel for JEV — type-safe γ, fail-closed scoring"
+description = "Colored-operad kernel for JEV — cospans, spans, type-safe γ, fail-closed scoring"
 
 [lib]
+name = "jev_kernel"
 path = "src/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"
+codegen-units = 1
