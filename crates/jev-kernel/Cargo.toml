@@ -1,0 +1,9 @@
+[package]
+name = "jev-kernel"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Colored-operad kernel for JEV — type-safe γ, fail-closed scoring"
+
+[lib]
+path = "src/lib.rs"
