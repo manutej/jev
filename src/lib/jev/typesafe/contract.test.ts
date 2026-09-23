@@ -271,11 +271,18 @@ test("17 R6 — a confident adverse answer must not ship (the T48 regression)", 
   assert.equal(r.value.model, "RED");
 
   // one seat at a time, from an otherwise benign response
+  // restrictions_agree caps AMBER, not RED: its cap is a probability threshold
+  // that has never been measured against a corpus, and an unmeasured veto is the
+  // defect docs/EVALUATION.md records four times. A named catastrophic Choice
+  // outcome may still refuse -- see the split_leakage row in test 25 -- because
+  // the model picked a specific enumerable bad thing rather than crossing an
+  // arbitrary threshold. AMBER still does not ship, so R6 is still witnessed.
   const one = benign();
   one.answers.restrictions_agree = noul(0.0);
   const r2 = composeVerdict(score("GREEN"), one, OPTS);
   assert.ok(r2.ok);
-  assert.equal(r2.value.verdict, "RED");
+  assert.equal(r2.value.verdict, "AMBER");
+  assert.ok(r2.value.caps.some((c) => c.rule === "R6"), JSON.stringify(r2.value.caps));
 
   const two = benign();
   two.answers.locators_resolvable = noul(0.02);
@@ -439,7 +446,7 @@ test("25 no rule raises: composed ≤ local over a fixed table of 60 pairs", () 
   const mustCap: Array<[Verdict, (r: SystemOneResponse) => void, Verdict]> = [
     ["GREEN", () => {}, "GREEN"],
     ["RED", () => {}, "RED"],
-    ["GREEN", (r) => void (r.answers.restrictions_agree = noul(0.0)), "RED"],
+    ["GREEN", (r) => void (r.answers.restrictions_agree = noul(0.0)), "AMBER"],
     ["GREEN", (r) => void (r.answers.terms_defined_in_text = noul(0.5)), "AMBER"],
     ["GREEN", (r) => void (r.answers.proxy_fidelity = scoreAns(0)), "AMBER"],
     ["GREEN", (r) => void delete r.answers.gold_color, "RED"],

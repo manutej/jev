@@ -257,7 +257,10 @@ export const SEAT_SPECS: Record<Seat, SeatSpec> = {
       "overlaps, the condition holds, so answer near 1.",
     port: "concept",
     role: "load-bearing",
-    adverse: { kind: "noul-below", threshold: ADVERSE_NOUL_BELOW, cap: "RED" },
+    // Cap is AMBER, not RED: this seat's firing rate has never been measured
+    // against any corpus. An unmeasured veto is the exact defect docs/EVALUATION.md
+    // records four times over. Promote to RED only with a measured firing rate.
+    adverse: { kind: "noul-below", threshold: ADVERSE_NOUL_BELOW, cap: "AMBER" },
   },
 
   "harness-teacher": {
