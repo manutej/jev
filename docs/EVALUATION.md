@@ -99,12 +99,32 @@ Measured behaviour of `classifyLocal`, on this repository's own 8-fixture corpus
 - consequence: toxin mass above τ_t = 0.12 on 6 of 8 fixtures (c1 0.62, c4 0.43,
   c6 0.26, c2 0.25, c7 0.22, c8 0.17) and a verdict of **RED on 7 of 8**.
 
-**This is a finding, not a change.** `lexicon.ts` is frozen by this PR's scope
-and nothing here edits it. The fix, when someone takes it: strip the mask token
-before tokenising, and delete the prefix-match branch. Note also that fixing it
-would have bought the v1.0 gate exactly zero fixtures, because three worse
-defects fired before `classifyLocal` was ever consulted — it was a real, severe
-bug **masked** by others, which is the usual reason such a bug survives.
+**Fixed, on explicit authorisation to unfreeze `lexicon.ts`.** The finding was
+originally filed here as a finding rather than a change, because `lexicon.ts`
+was frozen by this PR's scope. That freeze was lifted deliberately and the fix
+applied:
+
+- a bracketed placeholder is removed before tokenising, so `[MASK]` no longer
+  contributes the action word `mask`;
+- the `w.startsWith(t)` branch is deleted. It was the destructive one: any
+  short token claimed every longer entry sharing its prefix (`the` → `theory`,
+  `co` → `color` / `compose` / `cospan` / `count`). A token now matches on an
+  exact hit or a simple inflection (`-s`, `-es`, `-ed`, `-ing`);
+- function words are filtered by an explicit stop-list.
+
+Measured after the fix, same corpus: `[MASK]` and `the` carry **no preference**
+at all, `publish the report` reads **action 0.87** where it previously read idea
+0.64, and the verdict is **RED on 2 of 8** rather than 7 of 8. Argmax agrees
+with the gold colour on 3 of 8 — the remaining misses are the classifier typing
+the *sentence* rather than the *masked span*, a separate and still-open
+limitation (see "Where `local.dist` comes from" below). Six regression tests in
+`lexicon.test.ts` pin every clause above; all six fail against the pre-fix file.
+
+Note also that fixing it would have bought the v1.0 gate exactly zero fixtures,
+because three worse defects fired before `classifyLocal` was ever consulted — it
+was a real, severe bug **masked** by others, which is the usual reason such a
+bug survives. That ordering is why it is worth fixing now and was not worth
+fixing then.
 
 The design conclusion this codec acts on: *keep known rules, exact calculations
 and lookups in code, and do not also ask a model for them.* That is why
@@ -243,7 +263,8 @@ not the item.
 ## 8. What is still open
 
 - **`score.ts` τ_t and the `e14` case** (§5). Frozen here.
-- **`lexicon.ts` `classifyLocal`** (§3). Frozen here.
+- ~~**`lexicon.ts` `classifyLocal`** (§3).~~ **Fixed** — the freeze was lifted
+  on explicit authorisation. See §3 for the measured before/after.
 - **Where `local.dist` comes from.** Nothing wires `classifyLocal` to
   `composeVerdict`; the specification never sourced it. Until it is wired, the
   scope of "no model answer can raise a local verdict" depends on a seed whose
