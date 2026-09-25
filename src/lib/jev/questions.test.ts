@@ -43,12 +43,16 @@ test("E5 no arithmetic or date-compare asks", () => {
 test("E1 toxin fill on c7 is RED", () => {
   const item = CORPUS.find((c) => c.id === "c7");
   assert.ok(item);
+  // c7 forbids `entity` (its gold and only allowed color is `action`), so the toxin mass goes on `entity`.
+  assert.ok(item!.forbidden.includes("entity"));
   const s = scoreFill(
-    { entity: 0.05, concept: 0.05, idea: 0.05, evidence: 0.05, action: 0.8 },
+    { entity: 0.8, concept: 0.05, idea: 0.05, evidence: 0.05, action: 0.05 },
     item!.allowed,
     item!.forbidden,
   );
   assert.equal(s.verdict, "RED");
+  assert.ok(s.toxinMass > 0.12, "RED must come from the toxin rule, not low allowed mass");
+  assert.match(s.reasons[0]!, /^Toxin mass/);
 });
 
 test("E7 mid-band allowed mass is AMBER not GREEN", () => {
