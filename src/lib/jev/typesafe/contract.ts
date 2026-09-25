@@ -8,10 +8,13 @@
  * The workbench / Vercel route owns effects.
  */
 
-export const TYPESAFE_PINNED_MODEL = "jev-1.13.0" as const;
+import { CONTRACT, ENDPOINT, PIN } from "../../../../.jev/jev-core.ts";
+
+/** One source: the pin and endpoint come from the vendored jev-core contract (`.jev/`). */
+export const TYPESAFE_PINNED_MODEL = PIN;
 export type TypesafePinnedModel = typeof TYPESAFE_PINNED_MODEL;
 
-export const TYPESAFE_ENDPOINT = "https://api.typesafe.ai/v1/systemone" as const;
+export const TYPESAFE_ENDPOINT = ENDPOINT;
 
 export type JsonText = string | Record<string, unknown> | unknown[];
 
@@ -91,8 +94,8 @@ export type ContractError = {
 export const SCORE_LEVEL_MIN = 2;
 export const SCORE_LEVEL_MAX = 10;
 export const CHOICE_OPTION_MAX = 255;
-export const NOUL_MID_LOW = 0.4;
-export const NOUL_MID_HIGH = 0.6;
+export const NOUL_MID_LOW = CONTRACT.question_types.noul.mid_band[0];
+export const NOUL_MID_HIGH = CONTRACT.question_types.noul.mid_band[1];
 
 function hasInstructions(q: TypesafeQuestion): boolean {
   if (typeof q.instructions === "string") return q.instructions.trim().length > 0;

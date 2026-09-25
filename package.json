@@ -1,0 +1,8 @@
+{
+  "name": "jev",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-strip-types --test src/lib/jev/*.test.ts src/lib/jev/fp/*.test.ts src/lib/jev/typesafe/*.test.ts"
+  }
+}
