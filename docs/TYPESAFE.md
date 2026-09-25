@@ -38,17 +38,18 @@ Noul returns only `noul` in `[0,1]`. A Noul near 0.5 is a coin flip.
 
 - `score.ts` / `score_fill` — shipping gate (GREEN / AMBER / RED)
 - Thresholds τ_g=0.72, τ_t=0.12, τ_r=0.4
-- Mid-band Noul (0.4–0.6) on a load-bearing seat → AMBER
-- Judge Choice cannot override a local RED
+- Mid-band Noul (0.4–0.6) on a load-bearing seat → AMBER (`compose.ts` `composeVerdict`)
+- Judge Choice cannot override a local RED (`compose.ts` `composeVerdict`)
 - Effects: Vercel / workbench. This package does not fetch.
 
 ## Files
 
 | File | Role |
 | --- | --- |
-| `src/lib/jev/typesafe/contract.ts` | Request/response types + validators |
-| `src/lib/jev/typesafe/from-seats.ts` | 16 seats → one legal request |
-| `src/lib/jev/typesafe/compose.ts` | Answers + score_fill → verdict |
-| `src/lib/jev/typesafe/contract.test.ts` | Contract tests |
+| `src/lib/jev/typesafe/contract.ts` | Request/response types + validators. Pin, endpoint and Noul mid band come from `.jev/jev-core.ts` |
+| `src/lib/jev/typesafe/from-seats.ts` | 16 seats → one legal request. **Not present yet** |
+| `src/lib/jev/typesafe/compose.ts` | Local `scoreFill` verdict + load-bearing Nouls + judge Choice → verdict |
+| `src/lib/jev/typesafe/compose.test.ts` | Tests for the two `compose.ts` rules |
+| `src/lib/jev/typesafe/contract.test.ts` | Contract tests. **Not present yet** |
 
 Kernel (`operad.ts`, `colors.ts`, Rust WASM) is unchanged.
