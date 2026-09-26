@@ -1,6 +1,6 @@
 /**
  * Optional WASM twin of crates/jev-kernel.
- * Same integers, same pushout. Falls back silently to the TS kernel.
+ * Same integers, same pushout / pullback / product. Falls back silently to the TS kernel.
  */
 
 export type Backend = "rust" | "ts";
@@ -12,6 +12,7 @@ type Exports = {
   jev_out_len: () => number;
   jev_pushout: (leftLen: number, rightLen: number, color: number) => number;
   jev_pullback: (leftLen: number, rightLen: number, color: number) => number;
+  jev_product?: (leftLen: number, rightLen: number) => number;
   jev_score: (
     e: number,
     c: number,
@@ -80,6 +81,15 @@ export function rustPullback(left: number[], right: number[], color: number): nu
   const w = writeIn(left, right);
   if (!w || !api) return null;
   const status = api.jev_pullback(w.leftLen, w.rightLen, color);
+  if (status !== 0) return null;
+  return readOut();
+}
+
+/** Optional: missing on the checked-in wasm until rebuilt. */
+export function rustProduct(left: number[], right: number[]): number[] | null {
+  const w = writeIn(left, right);
+  if (!w || !api || typeof api.jev_product !== "function") return null;
+  const status = api.jev_product(w.leftLen, w.rightLen);
   if (status !== 0) return null;
   return readOut();
 }

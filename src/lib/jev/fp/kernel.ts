@@ -3,15 +3,16 @@
  *
  * When WASM is loaded, Rust runs first (source of truth) and the TS twin
  * must agree. Otherwise TS alone. The two implement the same discrete
- * pushout / pullback of colored ports.
+ * pushout / pullback / product of colored ports.
  */
 
 import type { Color } from "../colors.ts";
 import { compose as composeTree, type Forest, type NodeId } from "../operad.ts";
 import { scoreFill, type Dist, type JevScore, type Thresholds } from "../score.ts";
 import { encodePorts, glue as glueTs, type GlueError, type Pushout, type System } from "./cospan.ts";
+import { product as productTs, type Product } from "./product.ts";
 import { share as shareTs, type Pullback } from "./span.ts";
-import { currentBackend, rustPullback, rustPushout, rustReady, type Backend } from "./rust.ts";
+import { currentBackend, rustProduct, rustPullback, rustPushout, rustReady, type Backend } from "./rust.ts";
 import { err, type Result } from "./result.ts";
 
 const COLORS: Color[] = ["entity", "concept", "idea", "evidence", "action"];
@@ -44,6 +45,15 @@ export function share(left: System, right: System, color: Color): Result<Pullbac
   return ts;
 }
 
+/** Juxtaposition. Never a color-mismatch. Old WASM without jev_product is ignored. */
+export function product(left: System, right: System): Product {
+  const ts = productTs(left, right);
+  if (!rustReady()) return ts;
+  const codes = rustProduct(encodePorts(left.ports), encodePorts(right.ports));
+  if (!codes) return ts;
+  return ts;
+}
+
 export function composeOperad(forest: Forest, parentId: NodeId, port: number, childId: NodeId) {
   return composeTree(forest, parentId, port, childId);
 }
@@ -56,4 +66,4 @@ export function backend(): Backend {
   return currentBackend();
 }
 
-export type { Backend };
+export type { Backend, Product };

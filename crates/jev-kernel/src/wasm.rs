@@ -1,6 +1,7 @@
 //! C ABI for the browser. No wasm-bindgen — static buffers, integer colors.
 
 use crate::cospan::pushout_ports;
+use crate::product_ports;
 use crate::score_fill;
 use crate::span::pullback_ports;
 use crate::Color;
@@ -73,6 +74,21 @@ pub unsafe extern "C" fn jev_pullback(left_len: u32, right_len: u32, color: u8) 
         }
         Err(_) => 1,
     }
+}
+
+/// Layout in IN: [left...][right...]. Returns 0 unless concat exceeds MAX.
+/// Never a color-mismatch — product identifies nothing.
+#[no_mangle]
+pub unsafe extern "C" fn jev_product(left_len: u32, right_len: u32) -> i32 {
+    let base = *BUFS.input.get();
+    let left = &base[..left_len as usize];
+    let right = &base[left_len as usize..left_len as usize + right_len as usize];
+    let ports = product_ports(left, right);
+    if ports.len() > MAX {
+        return 1;
+    }
+    write_out(&ports);
+    0
 }
 
 fn color_bit(bit: u32, i: u32) -> bool {

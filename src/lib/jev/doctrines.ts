@@ -16,6 +16,7 @@ function op(
  * Applied doctrines from Libkind–Myers 2025:
  * port-plugging (cospan / pushout), variable-sharing (span / pullback),
  * generalized Moore machines (lenses).
+ * Product is juxtaposition with no identified color — not a fourth doctrine.
  */
 export function makeOperad(): Operad {
   const operations: Record<string, Operation> = {};
@@ -33,6 +34,7 @@ export function makeOperad(): Operad {
   add(op("claim", "Claim", "idea", ["concept", "evidence"], "port-plugging"));
   add(op("gate", "JEV gate", "action", ["idea", "evidence"], "port-plugging", "Fail-closed ship"));
   add(op("share", "Share variable", "entity", ["entity", "entity"], "variable-sharing", "Pullback"));
+  add(op("product", "Product systems", "entity", ["entity", "entity"], "variable-sharing", "Cartesian product — no identified color"));
   add(op("plug", "Plug ports", "concept", ["entity", "entity"], "port-plugging", "Pushout / cospan"));
   add(op("compose-maps", "Compose maps", "concept", ["concept", "concept"], "port-plugging"));
   add(op("simulate", "Simulate fill", "evidence", ["idea", "concept"], "moore"));
@@ -67,7 +69,7 @@ export const DOCTRINE_COPY: Record<DoctrineKind, { title: string; body: string }
   },
   "variable-sharing": {
     title: "Variable sharing",
-    body: "Span doctrine. Identify state along a pullback — the same variable, two views.",
+    body: "Span doctrine. Identify state along a pullback — the same variable, two views. Product is the no-interaction case: juxtapose, identify nothing.",
   },
   moore: {
     title: "Moore machines",

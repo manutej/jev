@@ -40,15 +40,15 @@ Noul returns only `noul` in `[0,1]`. A Noul near 0.5 is a coin flip.
 - Thresholds τ_g=0.72, τ_t=0.12, τ_r=0.4
 - Mid-band Noul (0.4–0.6) on a load-bearing seat → AMBER
 - Judge Choice cannot override a local RED
+- TypeSafe confidence does not write τ
 - Effects: Vercel / workbench. This package does not fetch.
 
-## Files
+## Files on the tree
 
 | File | Role |
 | --- | --- |
 | `src/lib/jev/typesafe/contract.ts` | Request/response types + validators |
-| `src/lib/jev/typesafe/from-seats.ts` | 16 seats → one legal request |
-| `src/lib/jev/typesafe/compose.ts` | Answers + score_fill → verdict |
-| `src/lib/jev/typesafe/contract.test.ts` | Contract tests |
+| `src/lib/jev/typesafe/index.ts` | Re-exports the contract |
 
-Kernel (`operad.ts`, `colors.ts`, Rust WASM) is unchanged.
+`from-seats.ts`, `compose.ts`, and `contract.test.ts` are not on main yet.
+Kernel now includes product juxtaposition (`product_ports` / `fp/product.ts`).
